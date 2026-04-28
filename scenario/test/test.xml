@@ -1,0 +1,182 @@
+<test>
+    <test-case id="StartCommand">
+        <q>/start</q>
+        <a>Открываю Голосовой Квиз.</a>
+    </test-case>
+
+    <test-case id="FallbackWithoutState">
+        <q>непонятная команда</q>
+        <a>Открываю Голосовой Квиз. Сейчас задам первый вопрос.</a>
+    </test-case>
+
+    <test-case id="FallbackQuestionPhase">
+        <rawRequest>
+            {
+              "payload": {
+                "meta": {
+                  "current_app": {
+                    "state": {
+                      "game": {
+                        "phase": "question"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+        </rawRequest>
+        <q>непонятная команда</q>
+        <a>Назовите один из вариантов: 1, 2, 3 или 4. Также доступны команды: повтори вопрос и мой счёт.</a>
+    </test-case>
+
+    <test-case id="FallbackIntroPhase">
+        <rawRequest>
+            {
+              "payload": {
+                "meta": {
+                  "current_app": {
+                    "state": {
+                      "game": {
+                        "phase": "intro"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+        </rawRequest>
+        <q>непонятная команда</q>
+        <a>Открываю Голосовой Квиз. Сейчас задам первый вопрос.</a>
+    </test-case>
+
+    <test-case id="FallbackFeedbackPhase">
+        <rawRequest>
+            {
+              "payload": {
+                "meta": {
+                  "current_app": {
+                    "state": {
+                      "game": {
+                        "phase": "feedback"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+        </rawRequest>
+        <q>непонятная команда</q>
+        <a>Ответ уже принят. Сейчас я озвучу следующий вопрос.</a>
+    </test-case>
+
+    <test-case id="FallbackResultPhase">
+        <rawRequest>
+            {
+              "payload": {
+                "meta": {
+                  "current_app": {
+                    "state": {
+                      "game": {
+                        "phase": "result"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+        </rawRequest>
+        <q>непонятная команда</q>
+        <a>Игра завершена. Скажите: сыграть ещё или мой счёт.</a>
+    </test-case>
+
+    <test-case id="SelectOptionOneCommand">
+        <q>один</q>
+    </test-case>
+
+    <test-case id="RepeatQuestionCommand">
+        <q>повтори вопрос</q>
+    </test-case>
+
+    <test-case id="RepeatQuestionSuggestionText">
+        <q>Повтори вопрос</q>
+    </test-case>
+
+    <test-case id="CurrentScoreCommand">
+        <q>мой счёт</q>
+    </test-case>
+
+    <test-case id="CurrentScoreSuggestionText">
+        <q>Мой счёт</q>
+    </test-case>
+
+    <test-case id="RestartGameCommand">
+        <q>сыграть ещё</q>
+    </test-case>
+
+    <test-case id="RestartGameSuggestionText">
+        <q>Сыграть ещё</q>
+    </test-case>
+
+    <test-case id="NewGameSuggestionText">
+        <q>Новая игра</q>
+    </test-case>
+
+    <test-case id="QuestionPromptEventFromActionParameters">
+        <requestData>
+            {
+              "action": {
+                "parameters": {
+                  "phrase": "Вопрос 1 из 10. Тестовый вопрос. Вариант 1: один. Вариант 2: два. Вариант 3: три. Вариант 4: четыре. Ответьте: 1, 2, 3 или 4.",
+                  "phase": "question",
+                  "questionIndex": 0
+                }
+              }
+            }
+        </requestData>
+        <event>question_prompt</event>
+        <a>Вопрос 1 из 10. Тестовый вопрос. Вариант 1: один. Вариант 2: два. Вариант 3: три. Вариант 4: четыре. Ответьте: 1, 2, 3 или 4.</a>
+    </test-case>
+
+    <test-case id="AnswerResultEventFromActionParameters">
+        <requestData>
+            {
+              "action": {
+                "parameters": {
+                  "phrase": "Верно.",
+                  "phase": "feedback",
+                  "status": "correct",
+                  "questionIndex": 0
+                }
+              }
+            }
+        </requestData>
+        <event>answer_result</event>
+        <a>Верно.</a>
+    </test-case>
+
+    <test-case id="ScoreReportEventFromParameters">
+        <requestData>
+            {
+              "parameters": {
+                "phrase": "Сейчас у вас 3 правильных ответов из 5. Всего в игре 10 вопросов.",
+                "phase": "question"
+              }
+            }
+        </requestData>
+        <event>score_report</event>
+        <a>Сейчас у вас 3 правильных ответов из 5. Всего в игре 10 вопросов.</a>
+    </test-case>
+
+    <test-case id="ResultPromptEventFromParameters">
+        <requestData>
+            {
+              "parameters": {
+                "phrase": "Игра завершена. У вас 7 правильных ответов из 10. Скажите: сыграть ещё.",
+                "phase": "result"
+              }
+            }
+        </requestData>
+        <event>result_prompt</event>
+        <a>Игра завершена. У вас 7 правильных ответов из 10. Скажите: сыграть ещё.</a>
+    </test-case>
+</test>
