@@ -71,7 +71,18 @@ theme: /
             }
 
     state: RepeatQuestion
+        q!: повтори
         q!: повтори вопрос
+        q!: повторить вопрос
+        q!: повтори еще раз
+        q!: повтори ещё раз
+        q!: повтори пожалуйста
+        q!: повтори вопрос пожалуйста
+        q!: скажи вопрос
+        q!: озвучь вопрос
+        q!: прочитай вопрос
+        q!: вопрос еще раз
+        q!: вопрос ещё раз
         script:
             repeatQuestion($context);
 
@@ -81,10 +92,30 @@ theme: /
         script:
             requestCurrentScore($context);
 
+    state: TerminateGameAdvice
+        q!: завершить игру
+        q!: заверши игру
+        q!: закончить игру
+        q!: закончи игру
+        q!: остановить игру
+        q!: останови игру
+        q!: стоп игра
+        q!: стоп игру
+        q!: выйти из игры
+        q!: выход из игры
+        script:
+            $reactions.answer({"value": voicePhrases.terminatePrompt});
+            addSuggestions(get_voice_commands(get_request($context)), $context);
+
     state: RestartGame
         q!: начать заново
         q!: новая игра
+        q!: начать новую игру
+        q!: начать игру заново
         q!: сыграть еще
         q!: сыграть ещё
+        q!: играем еще
+        q!: играем ещё
         script:
+            $reactions.answer({"value": voicePhrases.restartPrompt});
             restartGame($context);

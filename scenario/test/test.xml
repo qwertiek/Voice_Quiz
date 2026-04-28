@@ -101,6 +101,14 @@
         <q>Повтори вопрос</q>
     </test-case>
 
+    <test-case id="RepeatQuestionShortCommand">
+        <q>повтори</q>
+    </test-case>
+
+    <test-case id="RepeatQuestionNaturalCommand">
+        <q>повтори ещё раз</q>
+    </test-case>
+
     <test-case id="CurrentScoreCommand">
         <q>мой счёт</q>
     </test-case>
@@ -111,14 +119,27 @@
 
     <test-case id="RestartGameCommand">
         <q>сыграть ещё</q>
+        <a>Возвращаю на начальный экран. Выберите количество вопросов и нажмите Старт.</a>
     </test-case>
 
     <test-case id="RestartGameSuggestionText">
         <q>Сыграть ещё</q>
+        <a>Возвращаю на начальный экран. Выберите количество вопросов и нажмите Старт.</a>
     </test-case>
 
     <test-case id="NewGameSuggestionText">
         <q>Новая игра</q>
+        <a>Возвращаю на начальный экран. Выберите количество вопросов и нажмите Старт.</a>
+    </test-case>
+
+    <test-case id="TerminateGameAdvice">
+        <q>завершить игру</q>
+        <a>Чтобы выйти из текущей партии, нажмите кнопку Новая игра или скажите: новая игра.</a>
+    </test-case>
+
+    <test-case id="StopGameAdvice">
+        <q>стоп игра</q>
+        <a>Чтобы выйти из текущей партии, нажмите кнопку Новая игра или скажите: новая игра.</a>
     </test-case>
 
     <test-case id="QuestionPromptEventFromActionParameters">

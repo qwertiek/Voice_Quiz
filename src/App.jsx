@@ -9,6 +9,7 @@ import {
   CELEBRATION_DURATION_MS,
   DEDUPE_ACTION_WINDOW_MS,
   MAX_PENDING_VOICE_EVENTS,
+  REPEAT_QUESTION_SEND_DELAY_MS,
   VOICE_ACK_TIMEOUT_MS,
   VOICE_RETRY_DELAY_MS,
 } from './game/config';
@@ -81,13 +82,14 @@ export class App extends React.Component {
 
     this.celebrationTimer = null;
     this.nextQuestionTimer = null;
+    this.repeatQuestionTimer = null;
     this.initialAnnouncementTimer = null;
     this.voicePromptLockTimer = null;
     this.voicePromptLockId = 0;
     this.hasAnnouncedWelcome = false;
     this.lastActionSignature = '';
     this.lastActionAt = 0;
-    this.assistant = initializeAssistant(() => this.getStateForAssistant());
+    this.assistant = props.assistant || initializeAssistant(() => this.getStateForAssistant());
     this.voiceScheduler = new VoiceEventScheduler({
       getGameState: () => this.state.game,
       sendPayload: (event, settle) => this.sendVoicePayload(event, settle),
@@ -144,6 +146,10 @@ export class App extends React.Component {
 
     if (this.nextQuestionTimer) {
       clearTimeout(this.nextQuestionTimer);
+    }
+
+    if (this.repeatQuestionTimer) {
+      clearTimeout(this.repeatQuestionTimer);
     }
 
     if (this.initialAnnouncementTimer) {
@@ -346,6 +352,7 @@ export class App extends React.Component {
 
   startGameWithQuestionCount = (questionCount) => {
     this.clearPendingTransition();
+    this.clearPendingRepeatQuestion();
     this.releaseVoicePromptLock();
 
     const nextGame = createInitialGameState(QUIZ_QUESTIONS, {
@@ -403,8 +410,33 @@ export class App extends React.Component {
     }
   }
 
+  clearPendingRepeatQuestion() {
+    if (this.repeatQuestionTimer) {
+      clearTimeout(this.repeatQuestionTimer);
+      this.repeatQuestionTimer = null;
+    }
+  }
+
+  repeatCurrentQuestion() {
+    this.clearPendingRepeatQuestion();
+    this.releaseVoicePromptLock();
+
+    this.repeatQuestionTimer = setTimeout(() => {
+      this.repeatQuestionTimer = null;
+
+      if (!this.state.game || this.state.game.phase !== GAME_PHASES.QUESTION) {
+        return;
+      }
+
+      this.sendGameEvent(createQuestionPromptEvent(this.state.game), {
+        policy: VOICE_EVENT_POLICIES.INTERRUPT,
+      });
+    }, REPEAT_QUESTION_SEND_DELAY_MS);
+  }
+
   startNewGame() {
     this.clearPendingTransition();
+    this.clearPendingRepeatQuestion();
     this.releaseVoicePromptLock();
     this.voiceScheduler.interrupt({ clearPending: true });
     this.hasAnnouncedWelcome = false;
@@ -432,6 +464,7 @@ export class App extends React.Component {
       return;
     }
 
+    this.clearPendingRepeatQuestion();
     this.releaseVoicePromptLock();
 
     if (game.phase === GAME_PHASES.RESULT) {
@@ -489,9 +522,7 @@ export class App extends React.Component {
           return;
         }
         if (this.state.game.phase === GAME_PHASES.QUESTION) {
-          this.sendGameEvent(createQuestionPromptEvent(this.state.game), {
-            policy: VOICE_EVENT_POLICIES.INTERRUPT,
-          });
+          this.repeatCurrentQuestion();
         } else if (this.state.game.phase === GAME_PHASES.RESULT) {
           this.sendGameEvent(createResultPromptEvent(this.state.game), {
             policy: VOICE_EVENT_POLICIES.INTERRUPT,
